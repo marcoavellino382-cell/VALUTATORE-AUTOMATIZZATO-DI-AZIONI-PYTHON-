@@ -32,8 +32,8 @@ st.sidebar.markdown("""
 - **Rilascio:** Ottobre 2026
 
 **Link Utili:**
-- 🐙 [Repository GitHub](https://github.com)
-- 💼 [Profilo LinkedIn](https://linkedin.com/in/marco-avellino-1a0918411)
+- 🐙 [Repository GitHub](https://github.com/marcoavellino382-cell) 
+💼 [Profilo LinkedIn](https://linkedin.com/in/marco-avellino-1a0918411)
 
 ---
 *© 2026 All Rights Reserved*
