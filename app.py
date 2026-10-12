@@ -28,20 +28,54 @@ if ticker_input:
             # Inizializzazione ticker yfinance
             ticker = yf.Ticker(ticker_input)
             
-            # Estrazione Info Generali, Bilancio e Flussi di Cassa
-            info = ticker.info
+            # Estrazione Info Generali sicure
+            info = ticker.info if ticker.info else {}
             company_name = info.get('longName', ticker_input)
-            current_price = info.get('currentPrice', 0.0)
             currency = info.get('currency', 'USD')
             
+            # Recuperiamo il prezzo corrente dall'ultimo dato storico disponibile (molto più stabile)
+            historical_data = ticker.history(period="1d")
+            if not historical_data.empty:
+                current_price = historical_data['Close'].iloc[-1]
+            else:
+                current_price = info.get('currentPrice', 0.0)
+            
+            # Estrazione dei bilanci
             cash_flow = ticker.cashflow
             financials = ticker.financials
             balance_sheet = ticker.balancesheet
             
         if cash_flow.empty or 'Free Cash Flow' not in cash_flow.index:
-            st.error("⚠️ Dati sui flussi di cassa liberi (Free Cash Flow) non disponibili per questo Ticker su Yahoo Finance.")
+            st.error("⚠️ Dati sui flussi di cassa liberi (Free Cash Flow) non disponibili per questo Ticker.")
         else:
             st.header(f"{company_name} ({ticker_input})")
+            
+            # --- RECUPERO E CONTROLLO DATI PER LE METRICHE ---
+            market_cap = info.get('marketCap', 0)
+            pe_ratio = info.get('trailingPE', 'N/D')
+            
+            # Controllo ed estrazione sicura dell'EV/EBITDA
+            ebitda = info.get('enterpriseToEbitda', None)
+            if ebitda is None and not financials.empty and 'EBITDA' in financials.index:
+                ebitda_value = financials.loc['EBITDA'].iloc[0]
+                enterprise_value_est = info.get('enterpriseValue', market_cap)
+                if ebitda_value and ebitda_value != 0:
+                    ebitda = enterprise_value_est / ebitda_value
+            
+            # Formattazione delle stringhe per evitare errori visivi
+            ebitda_display = f"{ebitda:.2f}" if isinstance(ebitda, (int, float)) else "N/D"
+            pe_display = f"{pe_ratio:.2f}" if isinstance(pe_ratio, (int, float)) else "N/D"
+            market_cap_display = f"{market_cap:,}" if market_cap else "N/D"
+            
+            # --- SEZIONE METRICHE CHIAVE VISIVE ---
+            col1, col2, col3, col4 = st.columns(4)
+            col1.metric("Prezzo Attuale", f"{current_price:.2f} {currency}")
+            col2.metric("Market Cap", market_cap_display)
+            col3.metric("P/E Ratio", pe_display)
+            col4.metric("EV/EBITDA", ebitda_display)
+            
+            st.divider()
+   
             
             # --- SEZIONE METRICHE CHIAVE ---
             col1, col2, col3, col4 = st.columns(4)
