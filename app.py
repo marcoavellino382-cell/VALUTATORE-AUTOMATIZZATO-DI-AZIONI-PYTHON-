@@ -144,22 +144,30 @@ if ticker_input:
             
             equity_value = enterprise_value_dcf + total_cash_dcf - total_debt_dcf
             
-            intrinsic_value = equity_value / shares_outstanding
-            margin_of_safety = ((intrinsic_value - current_price) / intrinsic_value) * 100
-            
-            # --- PRESENTAZIONE RISULTATI VALUTAZIONE ---
+                       # --- PRESENTAZIONE RISULTATI VALUTAZIONE ---
             st.subheader("⚖️ Risultato della Valutazione DCF")
             
-            res_col1, res_col2, res_col3 = st.columns(3)
-            res_col1.metric("Valore Intrinseco Stimato", f"{intrinsic_value:.2f} {currency}")
-            res_col2.metric("Prezzo di Mercato Attuale", f"{current_price:.2f} {currency}")
+            # Mostriamo prima il valore aziendale complessivo (Equity Value) che è sempre disponibile
+            st.info(f"Il valore complessivo del capitale netto stimato della società (Equity Value) è pari a: **{int(equity_value):,} {currency}**")
             
-            if intrinsic_value > current_price:
-                res_col3.metric("Margine di Sicurezza", f"+{margin_of_safety:.1f}%", delta_color="normal")
-                st.success(f"🟢 L'azione risulta **SOTTOVALUTATA**. Il valore intrinseco stimato è superiore del {margin_of_safety:.1f}% rispetto al prezzo attuale.")
+            # Eseguiamo il calcolo per singola azione SOLO se le azioni circolanti sono state trovate
+            if shares_outstanding and shares_outstanding > 0:
+                intrinsic_value = equity_value / shares_outstanding
+                margin_of_safety = ((intrinsic_value - current_price) / intrinsic_value) * 100
+                
+                st.markdown("#### Stima per Singola Azione")
+                res_col1, res_col2, res_col3 = st.columns(3)
+                res_col1.metric("Valore Intrinseco Stimato", f"{intrinsic_value:.2f} {currency}")
+                res_col2.metric("Prezzo di Mercato Attuale", f"{current_price:.2f} {currency}")
+                
+                if intrinsic_value > current_price:
+                    res_col3.metric("Margine di Sicurezza", f"+{margin_of_safety:.1f}%", delta_color="normal")
+                    st.success(f"🟢 L'azione risulta **SOTTOVALUTATA**. Il valore intrinseco stimato è superiore del {margin_of_safety:.1f}% rispetto al prezzo attuale.")
+                else:
+                    res_col3.metric("Margine di Sicurezza", f"{margin_of_safety:.1f}%", delta_color="inverse")
+                    st.warning(f"🔴 L'azione risulta **SOPRAVALUTATA**. Il prezzo attuale di mercato supera la stima del valore intrinseco.")
             else:
-                res_col3.metric("Margine di Sicurezza", f"{margin_of_safety:.1f}%", delta_color="inverse")
-                st.warning(f"🔴 L'azione risulta **SOPRAVALUTATA**. Il prezzo attuale di mercato supera la stima del valore intrinseco.")
+                st.warning("⚠️ Nota: Impossibile calcolare il valore per singola azione perché il numero di azioni circolanti non è temporaneamente disponibile su Yahoo Finance.")
             
             with st.expander("🔍 Mostra i dettagli matematici dei flussi calcolati"):
                 dcf_data = {
@@ -171,7 +179,8 @@ if ticker_input:
                 st.write(f"**Terminal Value stimato all'anno 5:** {int(terminal_value):,} {currency}")
                 st.write(f"**Valore Attuale del Terminal Value:** {int(discounted_terminal_value):,} {currency}")
                 st.write(f"**Cassa Totale estratta:** {int(total_cash_dcf):,} {currency} | **Debito Totale estratto:** {int(total_debt_dcf):,} {currency}")
-                st.write(f"**Azioni in circolazione (Shares Outstanding):** {int(shares_outstanding):,}")
+                if shares_outstanding:
+                    st.write(f"**Azioni in circolazione (Shares Outstanding):** {int(shares_outstanding):,}")
                 
     except Exception as e:
         st.error(f"Errore durante l'elaborazione dei dati: {e}")
