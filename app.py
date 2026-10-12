@@ -33,7 +33,7 @@ st.sidebar.markdown("""
 
 **Link Utili:**
 - 🐙 [Repository GitHub](https://github.com)
-- 💼 [Profilo LinkedIn](https//linkedin.com/in/marco-avellino-1a0918411)
+- 💼 [Profilo LinkedIn](https://linkedin.com/in/marco-avellino-1a0918411)
 
 ---
 *© 2026 All Rights Reserved*
