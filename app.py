@@ -36,7 +36,7 @@ if ticker_input:
         with st.spinner(f"Scaricamento e analisi dei dati finanziari per {ticker_input}..."):
             ticker = yf.Ticker(ticker_input)
             
-            # Estrazione Info Generali e Fast Info (molto più stabili nel 2026)
+            # Estrazione Info Generali e Fast Info
             info = ticker.info if ticker.info else {}
             fast_info = ticker.fast_info if hasattr(ticker, 'fast_info') else {}
             
@@ -64,7 +64,6 @@ if ticker_input:
             st.header(f"{company_name} ({ticker_input})")
             
             # --- CALCOLO STRUTTURATO E SICURO DELLE METRICHE CHIAVE ---
-            # Numero di azioni circolanti estrapolate dal modulo veloce o info standard
             shares_outstanding = fast_info.get('sharesOutstanding', info.get('sharesOutstanding', None))
             
             # Market Cap sicuro
@@ -76,7 +75,7 @@ if ticker_input:
             pe_ratio = info.get('trailingPE', None)
             net_income_row = get_financial_row(financials, 'Net Income')
             if (pe_ratio is None or pe_ratio == 0) and net_income_row is not None:
-                latest_net_income = net_income_row.iloc[0] # Prende l'anno più recente
+                latest_net_income = net_income_row.iloc[0]
                 if latest_net_income and latest_net_income != 0 and market_cap:
                     pe_ratio = market_cap / latest_net_income
 
@@ -176,6 +175,6 @@ if ticker_input:
                     st.write(f"**Valore Attuale del Terminal Value:** {int(discounted_terminal_value):,} {currency}")
                     st.write(f"**Cassa Totale estratta:** {int(total_cash_dcf):,} {currency} | **Debito Totale estratto:** {int(total_debt_dcf):,} {currency}")
                     st.write(f"**Azioni in circolazione (Shares Outstanding):** {int(shares_outstanding):,}")
-
-                    except Exception as e:
-                    st.error(f"Errore durante l'elaborazione dei dati: {e}")
+                    
+    except Exception as e:
+        st.error(f"Errore durante l'elaborazione dei dati: {e}")
