@@ -144,27 +144,25 @@ if ticker_input:
             
             equity_value = enterprise_value_dcf + total_cash_dcf - total_debt_dcf
             
-            if not shares_outstanding:
-                st.error("Impossibile recuperare le azioni circolanti per completare il calcolo per singola azione.")
-            else:
-                intrinsic_value = equity_value / shares_outstanding
-                margin_of_safety = ((intrinsic_value - current_price) / intrinsic_value) * 100
+        
+            intrinsic_value = equity_value / shares_outstanding
+            margin_of_safety = ((intrinsic_value - current_price) / intrinsic_value) * 100
                 
-                # --- PRESENTAZIONE RISULTATI VALUTAZIONE ---
-                st.subheader("⚖️ Risultato della Valutazione DCF")
+             # --- PRESENTAZIONE RISULTATI VALUTAZIONE ---
+             st.subheader("⚖️ Risultato della Valutazione DCF")
                 
-                res_col1, res_col2, res_col3 = st.columns(3)
-                res_col1.metric("Valore Intrinseco Stimato", f"{intrinsic_value:.2f} {currency}")
-                res_col2.metric("Prezzo di Mercato Attuale", f"{current_price:.2f} {currency}")
+             res_col1, res_col2, res_col3 = st.columns(3)
+            res_col1.metric("Valore Intrinseco Stimato", f"{intrinsic_value:.2f} {currency}")
+             res_col2.metric("Prezzo di Mercato Attuale", f"{current_price:.2f} {currency}")
                 
-                if intrinsic_value > current_price:
+                    if intrinsic_value > current_price:
                     res_col3.metric("Margine di Sicurezza", f"+{margin_of_safety:.1f}%", delta_color="normal")
                     st.success(f"🟢 L'azione risulta **SOTTOVALUTATA**. Il valore intrinseco stimato è superiore del {margin_of_safety:.1f}% rispetto al prezzo attuale.")
                 else:
                     res_col3.metric("Margine di Sicurezza", f"{margin_of_safety:.1f}%", delta_color="inverse")
                     st.warning(f"🔴 L'azione risulta **SOPRAVALUTATA**. Il prezzo attuale di mercato supera la stima del valore intrinseco.")
                 
-                with st.expander("🔍 Mostra i dettagli matematici dei flussi calcolati"):
+                    with st.expander("🔍 Mostra i dettagli matematici dei flussi calcolati"):
                     dcf_data = {
                         "Anno": future_years,
                         "FCF Proiettato": [f"{int(x):,}" for x in projected_fcf],
