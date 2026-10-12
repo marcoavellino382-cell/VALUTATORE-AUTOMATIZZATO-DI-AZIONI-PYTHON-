@@ -24,7 +24,7 @@ perpetual_growth = st.sidebar.slider("Tasso di Crescita Perpetuo (%)", min_value
 
 if ticker_input:
     try:
-        with St.spinner(f"Scaricamento e analisi dei dati finanziari per {ticker_input}..."):
+        with st.spinner(f"Scaricamento e analisi dei dati finanziari per {ticker_input}..."):
             # Inizializzazione ticker yfinance
             ticker = yf.Ticker(ticker_input)
             
