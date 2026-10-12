@@ -22,6 +22,23 @@ wacc = st.sidebar.slider("Tasso di Sconto / WACC (%)", min_value=4.0, max_value=
 growth_rate = st.sidebar.slider("Tasso di Crescita FCF stimato (Primi 5 anni %)", min_value=-10.0, max_value=30.0, value=8.0, step=0.5) / 100
 perpetual_growth = st.sidebar.slider("Tasso di Crescita Perpetuo (%)", min_value=1.0, max_value=5.0, value=2.5, step=0.1) / 100
 
+# --- CREDENZIALI E INFO SVILUPPATORE ---
+st.sidebar.divider()
+st.sidebar.markdown("""
+### 🛠️ Info Sviluppatore
+- **Sviluppato da:** [Marco Avellino]
+- **Ruolo:** Python & Quantitative Finance Developer
+- **Versione App:** v1.2.0 (Stable)
+- **Rilascio:** Ottobre 2026
+
+**Link Utili:**
+- 🐙 [Repository GitHub](https://github.com)
+- 💼 [Profilo LinkedIn](https//linkedin.com/in/marco-avellino-1a0918411)
+
+---
+*© 2026 All Rights Reserved*
+""")
+
 # Funzione ausiliaria per estrarre in modo sicuro i dati dai bilanci di yfinance (case-insensitive)
 def get_financial_row(df, target_name):
     if df is None or df.empty:
